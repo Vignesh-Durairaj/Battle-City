@@ -1,13 +1,12 @@
 package clientlib;
 
 
-import java.util.ArrayList;
+import static clientlib.Action.NONE;
+import static java.lang.String.format;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static clientlib.Action.NONE;
-import static java.lang.String.format;
 
 public abstract class Solver {
 

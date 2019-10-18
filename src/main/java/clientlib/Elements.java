@@ -1,9 +1,5 @@
 package clientlib;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
 public enum Elements {
 
     NONE(' '),

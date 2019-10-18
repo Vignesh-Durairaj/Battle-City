@@ -1,8 +1,41 @@
 package clientlib;
 
-import java.util.*;
+import static clientlib.Elements.AI_TANK_DOWN;
+import static clientlib.Elements.AI_TANK_LEFT;
+import static clientlib.Elements.AI_TANK_RIGHT;
+import static clientlib.Elements.AI_TANK_UP;
+import static clientlib.Elements.BATTLE_WALL;
+import static clientlib.Elements.BULLET;
+import static clientlib.Elements.CONSTRUCTION;
+import static clientlib.Elements.CONSTRUCTION_DESTROYED;
+import static clientlib.Elements.CONSTRUCTION_DESTROYED_DOWN;
+import static clientlib.Elements.CONSTRUCTION_DESTROYED_DOWN_LEFT;
+import static clientlib.Elements.CONSTRUCTION_DESTROYED_DOWN_RIGHT;
+import static clientlib.Elements.CONSTRUCTION_DESTROYED_DOWN_TWICE;
+import static clientlib.Elements.CONSTRUCTION_DESTROYED_LEFT;
+import static clientlib.Elements.CONSTRUCTION_DESTROYED_LEFT_RIGHT;
+import static clientlib.Elements.CONSTRUCTION_DESTROYED_LEFT_TWICE;
+import static clientlib.Elements.CONSTRUCTION_DESTROYED_RIGHT;
+import static clientlib.Elements.CONSTRUCTION_DESTROYED_RIGHT_TWICE;
+import static clientlib.Elements.CONSTRUCTION_DESTROYED_RIGHT_UP;
+import static clientlib.Elements.CONSTRUCTION_DESTROYED_UP;
+import static clientlib.Elements.CONSTRUCTION_DESTROYED_UP_DOWN;
+import static clientlib.Elements.CONSTRUCTION_DESTROYED_UP_LEFT;
+import static clientlib.Elements.CONSTRUCTION_DESTROYED_UP_TWICE;
+import static clientlib.Elements.OTHER_TANK_DOWN;
+import static clientlib.Elements.OTHER_TANK_LEFT;
+import static clientlib.Elements.OTHER_TANK_RIGHT;
+import static clientlib.Elements.OTHER_TANK_UP;
+import static clientlib.Elements.TANK_DOWN;
+import static clientlib.Elements.TANK_LEFT;
+import static clientlib.Elements.TANK_RIGHT;
+import static clientlib.Elements.TANK_UP;
 
-import static clientlib.Elements.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 public class SampleSolver extends Solver {

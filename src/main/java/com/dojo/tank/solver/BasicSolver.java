@@ -19,6 +19,7 @@ import static java.lang.Math.abs;
 import static java.util.Arrays.asList;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -162,16 +163,41 @@ public class BasicSolver extends SampleSolver {
         }
         
         // To get the next random movement. TODO: Make it smart
-        List<Direction> availableDirections = new ArrayList<>();
-        availableDirections.addAll(directions);
-        Direction newDirection = availableDirections.get(ThreadLocalRandom.current().nextInt(0, directions.size()));
+        
+        Point nearestTank = getNearestTank(myPos);
+        Direction newDirection = UP;
+        if (nearestTank != null) {
+        	if (abs(nearestTank.getX() - myPos.getX()) <= abs(nearestTank.getY() - myPos.getY())) {
+        		newDirection = myPos.getX() > nearestTank.getX() ? DOWN : UP;
+        	} else {
+        		newDirection = myPos.getY() > nearestTank.getY() ? LEFT : RIGHT;
+        	} 
+        	System.out.println("Chasing for the nearest tank pos : " + newDirection);
+        } else {
+        	List<Direction> availableDirections = new ArrayList<>();
+            availableDirections.addAll(directions);
+            newDirection = availableDirections.get(ThreadLocalRandom.current().nextInt(0, directions.size()));
+            System.out.println("Getting into a new position : " + newDirection);
+        }
+        
+        
         
         switch (newDirection){                                 
-            case UP: return up();
-            case RIGHT: return right();
-            case DOWN: return down();
-            case LEFT: return left();
+            case UP: return up(BEFORE_TURN);
+            case RIGHT: return right(BEFORE_TURN);
+            case DOWN: return down(BEFORE_TURN);
+            case LEFT: return left(BEFORE_TURN);
             default: return down(AFTER_TURN);
         }
+	}
+	
+	private Point  getNearestTank(final Point myPos) {
+		List<Point> allTanks = getCoordinates(ALL_OTHER_TANKS);
+		Point nearestTankPos = allTanks
+			.stream()
+			.min(Comparator.comparingInt(tankPos -> abs(myPos.getX() - tankPos.getX()) + abs(myPos.getY() - tankPos.getY())))
+			.orElse(null);
+		System.out.println("Nearest Tank : " + nearestTankPos);
+		return nearestTankPos;
 	}
 }

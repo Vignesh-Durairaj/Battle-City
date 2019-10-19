@@ -1,6 +1,6 @@
 package clientlib;
 
-
+import com.dojo.tank.solver.BasicSolver;
 
 public class ClientApp {
 
@@ -8,7 +8,7 @@ public class ClientApp {
 
     public static void main(String[] args) {
         try {
-            WebSocketRunner.run(URL, new SampleSolver());
+            WebSocketRunner.run(URL, new BasicSolver());
         } catch (Exception e) {
             e.printStackTrace();
         }

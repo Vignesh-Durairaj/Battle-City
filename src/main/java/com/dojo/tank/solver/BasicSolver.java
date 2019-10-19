@@ -35,11 +35,15 @@ public class BasicSolver extends SampleSolver {
 
 	private static int HORIZONTAL_DISTANCE_THRESHOLD = 5;
 	private static int VERTICAL_DISTANCE_THRESHOLD = 12;
+	private static int MAX_DiSTANCE_THRESHOLD = 15;
 	private static final Elements[] ALL_OTHER_TANKS = new Elements[] {
 			OTHER_TANK_UP,OTHER_TANK_RIGHT,OTHER_TANK_DOWN,OTHER_TANK_LEFT,
             AI_TANK_UP, AI_TANK_RIGHT, AI_TANK_DOWN, AI_TANK_LEFT};
 
 	int counter = 1;
+	int struckFor = 0;
+	Point prevPos;
+	boolean freshStart = true;
 	boolean gotStuck = false;
 	
 	@Override
@@ -47,13 +51,14 @@ public class BasicSolver extends SampleSolver {
 		
 		// TODO: Work on this before the main event. 
 		// It will be midnight in Shenzhen. 
-		// You'll be damn dead, if you are stuck in the shield wall square.
+		// You'll be damn dead, if you are got stuck in the shield wall square.
+		
+		Point myPos = getPlayerTankCoordinates().get(0); 
 		if(counter <= 25 && gotStuck) {
 			counter ++;
 			return left(BEFORE_TURN);
 		}
 		
-		Point myPos = getPlayerTankCoordinates().get(0);   
         System.out.println("Current Postion : " + myPos);
         String nextMove = null;
         
@@ -166,7 +171,7 @@ public class BasicSolver extends SampleSolver {
         
         Point nearestTank = getNearestTank(myPos);
         Direction newDirection = UP;
-        if (nearestTank != null) {
+        if (nearestTank != null || getDistanceBetween(myPos, nearestTank) <= MAX_DiSTANCE_THRESHOLD) {
         	if (abs(nearestTank.getX() - myPos.getX()) <= abs(nearestTank.getY() - myPos.getY())) {
         		newDirection = myPos.getX() > nearestTank.getX() ? DOWN : UP;
         	} else {
@@ -195,9 +200,13 @@ public class BasicSolver extends SampleSolver {
 		List<Point> allTanks = getCoordinates(ALL_OTHER_TANKS);
 		Point nearestTankPos = allTanks
 			.stream()
-			.min(Comparator.comparingInt(tankPos -> abs(myPos.getX() - tankPos.getX()) + abs(myPos.getY() - tankPos.getY())))
+			.min(Comparator.comparingInt(tankPos -> getDistanceBetween(myPos, tankPos)))
 			.orElse(null);
 		System.out.println("Nearest Tank : " + nearestTankPos);
 		return nearestTankPos;
+	}
+	
+	private int getDistanceBetween(Point posOne, Point posTwo) {
+		return abs(posOne.getX() - posTwo.getX()) + abs(posOne.getY() - posTwo.getY());
 	}
 }

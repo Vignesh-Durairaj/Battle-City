@@ -173,10 +173,10 @@ public class BasicSolver extends SampleSolver {
         System.out.println("Total movement " + directions.size() +" and action = " + index);
         
         switch (directions.get(index)){                                 
-            case UP: return up(BEFORE_TURN);
-            case RIGHT: return right(BEFORE_TURN);
-            case DOWN: return down(BEFORE_TURN);
-            case LEFT: return left(BEFORE_TURN);
+            case UP: return up();
+            case RIGHT: return right();
+            case DOWN: return down();
+            case LEFT: return left();
             default: return down(AFTER_TURN);
         }
 	}

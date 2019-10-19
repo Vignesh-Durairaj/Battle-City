@@ -48,29 +48,29 @@ public class BasicSolver extends SampleSolver {
         System.out.println("Current Postion : " + myPos);
         String nextMove = null;
         
-        nextMove = moveToHitNearbyTank(myPos);
+        nextMove = turnAndHitNearbyTank(myPos);
         if (nextMove != null) return nextMove;
         
-        nextMove = someLogic(myPos);
+        nextMove = guidedMove(myPos);
         if (nextMove != null) return nextMove;
         
         return act();
         
 	}
 	
-	private String moveToHitNearbyTank(Point myPos) {
+	private String turnAndHitNearbyTank(Point myPos) {
 		String action = null;
 		
-		if (isAnyOfAt(myPos.getX(),myPos.getY()-1, ALL_OTHER_TANKS)){
+		if (isAnyOfAt(myPos.getX(), myPos.getY()-1, ALL_OTHER_TANKS)){
             System.out.println("Target is UP");
             action = up(AFTER_TURN);
         } else if (isAnyOfAt(myPos.getX()+1, myPos.getY(), ALL_OTHER_TANKS)){
             System.out.println("Target is RIGHT");
             action = right(AFTER_TURN);
-        } else if (isAnyOfAt(myPos.getX(),myPos.getY()+1, ALL_OTHER_TANKS)){
+        } else if (isAnyOfAt(myPos.getX(), myPos.getY()+1, ALL_OTHER_TANKS)){
             System.out.println("Target is DOWN");
             action = down(AFTER_TURN);
-        } else if (isAnyOfAt(myPos.getX()-1,myPos.getY(), ALL_OTHER_TANKS)){
+        } else if (isAnyOfAt(myPos.getX()-1, myPos.getY(), ALL_OTHER_TANKS)){
             System.out.println("Target is LEFT");
             action = left(AFTER_TURN);
         }
@@ -78,43 +78,48 @@ public class BasicSolver extends SampleSolver {
 		return action;
 	}
 	
-	private String someLogic(final Point myPos) {
+	private String guidedMove(final Point myPos) {
 		List<Direction> directions = new ArrayList<>(asList(UP, RIGHT, DOWN, LEFT));
 	       
-        if(isBarrierAt(myPos.getX(),myPos.getY()-1) || isAt(myPos.getX(),myPos.getY()-1, BULLET)){
+        if(isBarrierAt(myPos.getX(), myPos.getY() - 1) || 
+        		isAt(myPos.getX(), myPos.getY() - 1, BULLET)){
         	directions.set(0, null);
         }
-        if(isBarrierAt(myPos.getX()+1,myPos.getY()) || isAt(myPos.getX()+1,myPos.getY(), BULLET)){
+        
+        if(isBarrierAt(myPos.getX() + 1, myPos.getY()) || 
+        		isAt(myPos.getX() + 1, myPos.getY(), BULLET)){
         	directions.set(1, null);
         }
-        if(isBarrierAt(myPos.getX(),myPos.getY()+1) || isAt(myPos.getX(),myPos.getY()+1, BULLET)){
+        if(isBarrierAt(myPos.getX(), myPos.getY() + 1) || 
+        		isAt(myPos.getX(), myPos.getY() + 1, BULLET)){
         	directions.set(2, null);
         }
-        if(isBarrierAt(myPos.getX()-1,myPos.getY() )|| isAt(myPos.getX()-1,myPos.getY(), BULLET)){
+        if(isBarrierAt(myPos.getX() - 1, myPos.getY()) || 
+        		isAt(myPos.getX() - 1, myPos.getY(), BULLET)){
         	directions.set(3, null);
         }
            
        System.out.println("Instructions : " + directions);
        
         for ( Point tankPos: getOtherPlayersTanks()) {
-            for (int ii = 1; ii < 3; ii++) {
+            for (int i = 1; i < 3; i++) {
                 if (tankPos.getY() == myPos.getY()) {
-                    if (tankPos.getX() + ii == myPos.getX() && directions.get(3) != null) {
-                        System.out.println("enemy is left in " + ii);
+                    if (tankPos.getX() + i == myPos.getX() && directions.get(3) != null) {
+                        System.out.println("Enemy tank is LEFT" + i);
                         return left(AFTER_TURN);
                     }
-                    if (tankPos.getX() - ii == myPos.getX() && directions.get(1) != null) {
-                        System.out.println("enemy is right in " + ii);
+                    if (tankPos.getX() - i == myPos.getX() && directions.get(1) != null) {
+                        System.out.println("Enemy tank is RIGHT" + i);
                         return right(AFTER_TURN);
                     }
                 }
                 if (tankPos.getX() == myPos.getX()) {
-                    if (tankPos.getY() + ii == myPos.getY() && directions.get(0) != null) {
-                        System.out.println("enemy is up in " + ii);
+                    if (tankPos.getY() + i == myPos.getY() && directions.get(0) != null) {
+                        System.out.println("Enemy tank is UP" + i);
                         return up(AFTER_TURN);
                     }
-                    if (tankPos.getY() - ii == myPos.getY() && directions.get(2) != null) {
-                        System.out.println("enemy is down in " + ii);
+                    if (tankPos.getY() - i == myPos.getY() && directions.get(2) != null) {
+                        System.out.println("Enemy tank is DOWN" + i);
                         return down(AFTER_TURN);
                     }
                 }
@@ -144,22 +149,22 @@ public class BasicSolver extends SampleSolver {
             }
         }
         
-        int a; 
-        boolean ok;
+        int index; 
+        boolean flag;
         do {
-            ok = true;
-            a = ThreadLocalRandom.current().nextInt(0, directions.size());
-            System.out.println("a = " + a);
-            if (directions.get(a) == null)
+            flag = true;
+            index = ThreadLocalRandom.current().nextInt(0, directions.size());
+            System.out.println("Direction index : " + index);
+            if (directions.get(index) == null)
             {
-                ok = false;
-                directions.remove(a);
-                System.out.println("size became " + directions.size());
+                flag = false;
+                directions.remove(index);
+                System.out.println("Modified direction size : " + directions.size());
             }
-        }while(ok == false);
-        System.out.println("Total movement " + directions.size() +" and action = " + a);
+        }while(flag == false);
+        System.out.println("Total movement " + directions.size() +" and action = " + index);
         
-        switch (directions.get(a)){                                 
+        switch (directions.get(index)){                                 
             case UP:
                 return up();
             case RIGHT:

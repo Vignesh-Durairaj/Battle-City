@@ -50,7 +50,39 @@ public class Point {
 
 	@Override
 	public String toString() {
-		return "Point [x=" + x + ", y=" + y + "]";
+		return "Position Co-ordinates [x=" + x + ", y=" + y + "]";
+	}
+	
+	public Point upPos() {
+		return new Point(this.x, this.y + 1);
+	}
+	
+	public Point rightPos() {
+		return new Point(this.x + 1, this.y);
+	}
+	
+	public Point downPos() {
+		return new Point(this.x, this.y - 1);
+	}
+	
+	public Point leftPos() {
+		return new Point(this.x - 1, this.y);
+	}
+	
+	public Point getTopRight() {
+		return new Point(this.x + 1, this.y + 1);
+	}
+	
+	public Point getBottomRight() {
+		return new Point(this.x + 1, this.y - 1);
+	}
+	
+	public Point getTopLeft() {
+		return new Point(this.x - 1, this.y + 1);
+	}
+	
+	public Point getBottomLeft() {
+		return new Point(this.x - 1, this.y - 1);
 	}
     
 }

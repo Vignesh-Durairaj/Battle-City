@@ -19,7 +19,9 @@ import static java.lang.Math.abs;
 import static java.util.Arrays.asList;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.dojo.tank.enums.Direction;
@@ -85,24 +87,25 @@ public class BasicSolver extends SampleSolver {
 	}
 	
 	private String guidedMove(final Point myPos) {
-		List<Direction> directions = new ArrayList<>(asList(UP, RIGHT, DOWN, LEFT));
+		// Get possible moves
+		Set<Direction> directions = new HashSet<>(asList(UP, RIGHT, DOWN, LEFT));
 	       
         if(isBarrierAt(myPos.getX(), myPos.getY() - 1) || 
         		isAt(myPos.getX(), myPos.getY() - 1, BULLET)){
-        	directions.set(0, null);
+        	directions.remove(UP);
         }
         
         if(isBarrierAt(myPos.getX() + 1, myPos.getY()) || 
         		isAt(myPos.getX() + 1, myPos.getY(), BULLET)){
-        	directions.set(1, null);
+        	directions.remove(RIGHT);
         }
         if(isBarrierAt(myPos.getX(), myPos.getY() + 1) || 
         		isAt(myPos.getX(), myPos.getY() + 1, BULLET)){
-        	directions.set(2, null);
+        	directions.remove(DOWN);
         }
         if(isBarrierAt(myPos.getX() - 1, myPos.getY()) || 
         		isAt(myPos.getX() - 1, myPos.getY(), BULLET)){
-        	directions.set(3, null);
+        	directions.remove(LEFT);
         }
            
        System.out.println("Instructions : " + directions);
@@ -110,21 +113,21 @@ public class BasicSolver extends SampleSolver {
         for (Point tankPos: getOtherPlayersTanks()) {
             for (int i = 1; i < 3; i++) {
                 if (tankPos.getY() == myPos.getY()) {
-                    if (tankPos.getX() + i == myPos.getX() && directions.get(3) != null) {
+                    if (tankPos.getX() + i == myPos.getX() && directions.contains(LEFT)) {
                         System.out.println("Enemy tank is LEFT : " + i);
                         return left(AFTER_TURN);
                     }
-                    if (tankPos.getX() - i == myPos.getX() && directions.get(1) != null) {
+                    if (tankPos.getX() - i == myPos.getX() && directions.contains(RIGHT)) {
                         System.out.println("Enemy tank is RIGHT : " + i);
                         return right(AFTER_TURN);
                     }
                 }
                 if (tankPos.getX() == myPos.getX()) {
-                    if (tankPos.getY() + i == myPos.getY() && directions.get(0) != null) {
+                    if (tankPos.getY() + i == myPos.getY() && directions.contains(UP)) {
                         System.out.println("Enemy tank is UP : " + i);
                         return up(AFTER_TURN);
                     }
-                    if (tankPos.getY() - i == myPos.getY() && directions.get(2) != null) {
+                    if (tankPos.getY() - i == myPos.getY() && directions.contains(DOWN)) {
                         System.out.println("Enemy tank is DOWN : " + i);
                         return down(AFTER_TURN);
                     }
@@ -135,11 +138,11 @@ public class BasicSolver extends SampleSolver {
         for (Point enemyTankPos: getOtherPlayersTanks()) {
             if (enemyTankPos.getY() == myPos.getY() && 
             		abs(enemyTankPos.getX() - myPos.getX()) <= VERTICAL_DISTANCE_THRESHOLD) {
-                if (enemyTankPos.getX() < myPos.getX() && directions.get(3) != null) {
+                if (enemyTankPos.getX() < myPos.getX() && directions.contains(LEFT)) {
                     System.out.println("Enemy tank is LEFT : " + enemyTankPos);
                     return left(AFTER_TURN);
                 }
-                if (enemyTankPos.getX() > myPos.getX() && directions.get(1) != null) {
+                if (enemyTankPos.getX() > myPos.getX() && directions.contains(RIGHT)) {
                     System.out.println("Enemy tank is RIGHT : " + enemyTankPos);
                     return right(AFTER_TURN);
                 }
@@ -147,32 +150,23 @@ public class BasicSolver extends SampleSolver {
             
             if (enemyTankPos.getX() == myPos.getX() && 
             		abs(enemyTankPos.getY() - myPos.getY()) <= HORIZONTAL_DISTANCE_THRESHOLD) {
-                if (enemyTankPos.getY() < myPos.getY() && directions.get(0) != null) {
+                if (enemyTankPos.getY() < myPos.getY() && directions.contains(UP)) {
                     System.out.println("Enemy tank is UP : " + enemyTankPos);
                     return up(AFTER_TURN);
                 }
-                if (enemyTankPos.getY() > myPos.getY() && directions.get(2) != null) {
+                if (enemyTankPos.getY() > myPos.getY() && directions.contains(DOWN)) {
                     System.out.println("Enemy tank is DOWN : " + enemyTankPos);
                     return down(AFTER_TURN);
                 }
             }
         }
         
-        int index; 
-        boolean flag;
-        do {
-            flag = true;
-            index = ThreadLocalRandom.current().nextInt(0, directions.size());
-            System.out.println("Direction index : " + index);
-            if (directions.get(index) == null) {
-                flag = false;
-                directions.remove(index);
-                System.out.println("Modified direction size : " + directions.size());
-            }
-        } while(flag == false);
-        System.out.println("Total movement " + directions.size() +" and action = " + index);
+        // To get the next random movement. TODO: Make it smart
+        List<Direction> availableDirections = new ArrayList<>();
+        availableDirections.addAll(directions);
+        Direction newDirection = availableDirections.get(ThreadLocalRandom.current().nextInt(0, directions.size()));
         
-        switch (directions.get(index)){                                 
+        switch (newDirection){                                 
             case UP: return up();
             case RIGHT: return right();
             case DOWN: return down();

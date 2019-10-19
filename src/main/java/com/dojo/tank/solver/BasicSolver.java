@@ -15,6 +15,7 @@ import static com.dojo.tank.enums.Direction.DOWN;
 import static com.dojo.tank.enums.Direction.LEFT;
 import static com.dojo.tank.enums.Direction.RIGHT;
 import static com.dojo.tank.enums.Direction.UP;
+import static java.lang.Math.abs;
 import static java.util.Arrays.asList;
 
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ import clientlib.SampleSolver;
 
 public class BasicSolver extends SampleSolver {
 
-	private static int HORIZONTAL_DISTANCE_THRESHOLD = 5;
+	private static int HORIZONTAL_DISTANCE_THRESHOLD = 7;
 	private static int VERTICAL_DISTANCE_THRESHOLD = 12;
 	private static final Elements[] ALL_OTHER_TANKS = new Elements[] {
 			OTHER_TANK_UP,OTHER_TANK_RIGHT,OTHER_TANK_DOWN,OTHER_TANK_LEFT,
@@ -41,7 +42,9 @@ public class BasicSolver extends SampleSolver {
 	@Override
 	public String move() {
 		
-		// TODO: Work on this before the main event. It will be midnight in Shenzhen.
+		// TODO: Work on this before the main event. 
+		// It will be midnight in Shenzhen. 
+		// You'll be damn dead, if you are stuck in the shield wall square.
 		if(counter <= 25 && gotStuck) {
 			counter ++;
 			return left(BEFORE_TURN);
@@ -131,7 +134,7 @@ public class BasicSolver extends SampleSolver {
         
         for ( Point enemyTankPos: getOtherPlayersTanks()) {
             if (enemyTankPos.getY() == myPos.getY() && 
-            		Math.abs(enemyTankPos.getX() - myPos.getX()) <= VERTICAL_DISTANCE_THRESHOLD) {
+            		abs(enemyTankPos.getX() - myPos.getX()) <= VERTICAL_DISTANCE_THRESHOLD) {
                 if (enemyTankPos.getX() < myPos.getX() && directions.get(3) != null) {
                     System.out.println("Enemy tank is LEFT" + enemyTankPos);
                     return left(AFTER_TURN);
@@ -143,7 +146,7 @@ public class BasicSolver extends SampleSolver {
             }
             
             if (enemyTankPos.getX() == myPos.getX() && 
-            		Math.abs(enemyTankPos.getY() - myPos.getY()) <= HORIZONTAL_DISTANCE_THRESHOLD) {
+            		abs(enemyTankPos.getY() - myPos.getY()) <= HORIZONTAL_DISTANCE_THRESHOLD) {
                 if (enemyTankPos.getY() < myPos.getY() && directions.get(0) != null) {
                     System.out.println("Enemy tank is UP" + enemyTankPos);
                     return up(AFTER_TURN);
@@ -171,14 +174,10 @@ public class BasicSolver extends SampleSolver {
         System.out.println("Total movement " + directions.size() +" and action = " + index);
         
         switch (directions.get(index)){                                 
-            case UP:
-                return up();
-            case RIGHT:
-                return right();
-            case DOWN:
-                return down();
-            case LEFT:
-                return left();
+            case UP: return up();
+            case RIGHT: return right();
+            case DOWN: return down();
+            case LEFT: return left();
             default: return down(AFTER_TURN);
         }
 	}

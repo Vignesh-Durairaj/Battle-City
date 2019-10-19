@@ -29,16 +29,19 @@ import clientlib.SampleSolver;
 
 public class BasicSolver extends SampleSolver {
 
-	int counter = 1;
-	boolean gotStuck = false;
-	
+	private static int HORIZONTAL_DISTANCE_THRESHOLD = 5;
+	private static int VERTICAL_DISTANCE_THRESHOLD = 12;
 	private static final Elements[] ALL_OTHER_TANKS = new Elements[] {
 			OTHER_TANK_UP,OTHER_TANK_RIGHT,OTHER_TANK_DOWN,OTHER_TANK_LEFT,
             AI_TANK_UP, AI_TANK_RIGHT, AI_TANK_DOWN, AI_TANK_LEFT};
+
+	int counter = 1;
+	boolean gotStuck = false;
 	
 	@Override
 	public String move() {
 		
+		// TODO: Work on this before the main event. It will be midnight in Shenzhen.
 		if(counter <= 25 && gotStuck) {
 			counter ++;
 			return left(BEFORE_TURN);
@@ -127,7 +130,8 @@ public class BasicSolver extends SampleSolver {
         }
         
         for ( Point enemyTankPos: getOtherPlayersTanks()) {
-            if (enemyTankPos.getY() == myPos.getY() && Math.abs(enemyTankPos.getX() - myPos.getX()) <= 12) {
+            if (enemyTankPos.getY() == myPos.getY() && 
+            		Math.abs(enemyTankPos.getX() - myPos.getX()) <= VERTICAL_DISTANCE_THRESHOLD) {
                 if (enemyTankPos.getX() < myPos.getX() && directions.get(3) != null) {
                     System.out.println("Enemy tank is LEFT" + enemyTankPos);
                     return left(AFTER_TURN);
@@ -137,7 +141,9 @@ public class BasicSolver extends SampleSolver {
                     return right(AFTER_TURN);
                 }
             }
-            if (enemyTankPos.getX() == myPos.getX() && Math.abs(enemyTankPos.getY() - myPos.getY()) <= 5) {
+            
+            if (enemyTankPos.getX() == myPos.getX() && 
+            		Math.abs(enemyTankPos.getY() - myPos.getY()) <= HORIZONTAL_DISTANCE_THRESHOLD) {
                 if (enemyTankPos.getY() < myPos.getY() && directions.get(0) != null) {
                     System.out.println("Enemy tank is UP" + enemyTankPos);
                     return up(AFTER_TURN);

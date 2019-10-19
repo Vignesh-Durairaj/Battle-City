@@ -30,7 +30,7 @@ import clientlib.SampleSolver;
 
 public class BasicSolver extends SampleSolver {
 
-	private static int HORIZONTAL_DISTANCE_THRESHOLD = 7;
+	private static int HORIZONTAL_DISTANCE_THRESHOLD = 5;
 	private static int VERTICAL_DISTANCE_THRESHOLD = 12;
 	private static final Elements[] ALL_OTHER_TANKS = new Elements[] {
 			OTHER_TANK_UP,OTHER_TANK_RIGHT,OTHER_TANK_DOWN,OTHER_TANK_LEFT,
@@ -107,40 +107,40 @@ public class BasicSolver extends SampleSolver {
            
        System.out.println("Instructions : " + directions);
        
-        for ( Point tankPos: getOtherPlayersTanks()) {
+        for (Point tankPos: getOtherPlayersTanks()) {
             for (int i = 1; i < 3; i++) {
                 if (tankPos.getY() == myPos.getY()) {
                     if (tankPos.getX() + i == myPos.getX() && directions.get(3) != null) {
-                        System.out.println("Enemy tank is LEFT" + i);
+                        System.out.println("Enemy tank is LEFT : " + i);
                         return left(AFTER_TURN);
                     }
                     if (tankPos.getX() - i == myPos.getX() && directions.get(1) != null) {
-                        System.out.println("Enemy tank is RIGHT" + i);
+                        System.out.println("Enemy tank is RIGHT : " + i);
                         return right(AFTER_TURN);
                     }
                 }
                 if (tankPos.getX() == myPos.getX()) {
                     if (tankPos.getY() + i == myPos.getY() && directions.get(0) != null) {
-                        System.out.println("Enemy tank is UP" + i);
+                        System.out.println("Enemy tank is UP : " + i);
                         return up(AFTER_TURN);
                     }
                     if (tankPos.getY() - i == myPos.getY() && directions.get(2) != null) {
-                        System.out.println("Enemy tank is DOWN" + i);
+                        System.out.println("Enemy tank is DOWN : " + i);
                         return down(AFTER_TURN);
                     }
                 }
             }
         }
         
-        for ( Point enemyTankPos: getOtherPlayersTanks()) {
+        for (Point enemyTankPos: getOtherPlayersTanks()) {
             if (enemyTankPos.getY() == myPos.getY() && 
             		abs(enemyTankPos.getX() - myPos.getX()) <= VERTICAL_DISTANCE_THRESHOLD) {
                 if (enemyTankPos.getX() < myPos.getX() && directions.get(3) != null) {
-                    System.out.println("Enemy tank is LEFT" + enemyTankPos);
+                    System.out.println("Enemy tank is LEFT : " + enemyTankPos);
                     return left(AFTER_TURN);
                 }
                 if (enemyTankPos.getX() > myPos.getX() && directions.get(1) != null) {
-                    System.out.println("Enemy tank is RIGHT" + enemyTankPos);
+                    System.out.println("Enemy tank is RIGHT : " + enemyTankPos);
                     return right(AFTER_TURN);
                 }
             }
@@ -148,11 +148,11 @@ public class BasicSolver extends SampleSolver {
             if (enemyTankPos.getX() == myPos.getX() && 
             		abs(enemyTankPos.getY() - myPos.getY()) <= HORIZONTAL_DISTANCE_THRESHOLD) {
                 if (enemyTankPos.getY() < myPos.getY() && directions.get(0) != null) {
-                    System.out.println("Enemy tank is UP" + enemyTankPos);
+                    System.out.println("Enemy tank is UP : " + enemyTankPos);
                     return up(AFTER_TURN);
                 }
                 if (enemyTankPos.getY() > myPos.getY() && directions.get(2) != null) {
-                    System.out.println("Enemy tank is DOWN" + enemyTankPos);
+                    System.out.println("Enemy tank is DOWN : " + enemyTankPos);
                     return down(AFTER_TURN);
                 }
             }
@@ -164,13 +164,12 @@ public class BasicSolver extends SampleSolver {
             flag = true;
             index = ThreadLocalRandom.current().nextInt(0, directions.size());
             System.out.println("Direction index : " + index);
-            if (directions.get(index) == null)
-            {
+            if (directions.get(index) == null) {
                 flag = false;
                 directions.remove(index);
                 System.out.println("Modified direction size : " + directions.size());
             }
-        }while(flag == false);
+        } while(flag == false);
         System.out.println("Total movement " + directions.size() +" and action = " + index);
         
         switch (directions.get(index)){                                 

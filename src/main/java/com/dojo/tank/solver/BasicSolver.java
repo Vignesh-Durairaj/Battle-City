@@ -17,9 +17,9 @@ import static com.dojo.tank.enums.Direction.RIGHT;
 import static com.dojo.tank.enums.Direction.UP;
 import static java.lang.Math.abs;
 import static java.util.Arrays.asList;
+import static java.util.Comparator.comparingInt;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,7 +35,7 @@ public class BasicSolver extends SampleSolver {
 
 	private static int HORIZONTAL_DISTANCE_THRESHOLD = 5;
 	private static int VERTICAL_DISTANCE_THRESHOLD = 12;
-	private static int MAX_DiSTANCE_THRESHOLD = 15;
+	private static int MAX_DISTANCE_THRESHOLD = 250;
 	private static final Elements[] ALL_OTHER_TANKS = new Elements[] {
 			OTHER_TANK_UP,OTHER_TANK_RIGHT,OTHER_TANK_DOWN,OTHER_TANK_LEFT,
             AI_TANK_UP, AI_TANK_RIGHT, AI_TANK_DOWN, AI_TANK_LEFT};
@@ -69,7 +69,6 @@ public class BasicSolver extends SampleSolver {
         if (nextMove != null) return nextMove;
         
         return act();
-        
 	}
 	
 	private String turnAndHitNearbyTank(Point myPos) {
@@ -171,28 +170,25 @@ public class BasicSolver extends SampleSolver {
         
         Point nearestTank = getNearestTank(myPos);
         Direction newDirection = UP;
-        if (nearestTank != null || getDistanceBetween(myPos, nearestTank) <= MAX_DiSTANCE_THRESHOLD) {
-        	if (abs(nearestTank.getX() - myPos.getX()) <= abs(nearestTank.getY() - myPos.getY())) {
+        if (nearestTank != null || getDistanceBetween(myPos, nearestTank) <= MAX_DISTANCE_THRESHOLD) {
+        	if(nearestTank.getX() == myPos.getX()) {
+        		newDirection = myPos.getY() > nearestTank.getY() ? LEFT : RIGHT;
+        	} else if (nearestTank.getY() == myPos.getY()) {
+        		newDirection = myPos.getX() > nearestTank.getX() ? DOWN : UP;
+        	} else if (abs(nearestTank.getX() - myPos.getX()) <= abs(nearestTank.getY() - myPos.getY())) {
         		newDirection = myPos.getX() > nearestTank.getX() ? DOWN : UP;
         	} else {
         		newDirection = myPos.getY() > nearestTank.getY() ? LEFT : RIGHT;
         	} 
-        	System.out.println("Chasing for the nearest tank pos : " + newDirection);
+        	
+        	if (directions.contains(newDirection)) {
+        		System.out.println("Chasing for the nearest tank pos : " + newDirection);
+        		return getMovementFromDirection(newDirection);
+        	} else {
+        		return getRandomDirections(directions);
+        	}
         } else {
-        	List<Direction> availableDirections = new ArrayList<>();
-            availableDirections.addAll(directions);
-            newDirection = availableDirections.get(ThreadLocalRandom.current().nextInt(0, directions.size()));
-            System.out.println("Getting into a new position : " + newDirection);
-        }
-        
-        
-        
-        switch (newDirection){                                 
-            case UP: return up(BEFORE_TURN);
-            case RIGHT: return right(BEFORE_TURN);
-            case DOWN: return down(BEFORE_TURN);
-            case LEFT: return left(BEFORE_TURN);
-            default: return down(AFTER_TURN);
+        	return getRandomDirections(directions);
         }
 	}
 	
@@ -200,7 +196,7 @@ public class BasicSolver extends SampleSolver {
 		List<Point> allTanks = getCoordinates(ALL_OTHER_TANKS);
 		Point nearestTankPos = allTanks
 			.stream()
-			.min(Comparator.comparingInt(tankPos -> getDistanceBetween(myPos, tankPos)))
+			.min(comparingInt(tankPos -> getDistanceBetween(myPos, tankPos)))
 			.orElse(null);
 		System.out.println("Nearest Tank : " + nearestTankPos);
 		return nearestTankPos;
@@ -209,4 +205,23 @@ public class BasicSolver extends SampleSolver {
 	private int getDistanceBetween(Point posOne, Point posTwo) {
 		return abs(posOne.getX() - posTwo.getX()) + abs(posOne.getY() - posTwo.getY());
 	}
+	
+	private String getRandomDirections(Set<Direction> directions) {
+		List<Direction> availableDirections = new ArrayList<>();
+        availableDirections.addAll(directions);
+        Direction newDirection = availableDirections.get(ThreadLocalRandom.current().nextInt(0, directions.size()));
+        System.out.println("Getting into a new random position : " + newDirection);
+        return getMovementFromDirection(newDirection);
+	}
+	
+	private String getMovementFromDirection(Direction direction) {
+		switch (direction){                                 
+	        case UP: return up(BEFORE_TURN);
+	        case RIGHT: return right(BEFORE_TURN);
+	        case DOWN: return down(BEFORE_TURN);
+	        case LEFT: return left(BEFORE_TURN);
+	        default: return down(AFTER_TURN);
+		}
+	}
+	
 }
